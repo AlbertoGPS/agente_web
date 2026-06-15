@@ -2,7 +2,7 @@ import { pipeline, env } from '@xenova/transformers';
 import embeddingsData from './data/embeddings.json';
 env.allowLocalModels = false;
 
-const THRESHOLD = 0.65;
+const THRESHOLD = 0.30;
 const COLLECTION_NAME = 'endpoints_redgps';
 
 let embedder = null;
@@ -13,6 +13,10 @@ function cosineSimilarity(a, b) {
 
 // Búsqueda local en el JSON estático (producción)
 function buscarEnJSON(data, queryEmbedding, limite) {
+
+  console.log(data);
+  console.log(queryEmbedding);
+
   return data
     .map(item => ({ ...item, distance: cosineSimilarity(queryEmbedding, item.embedding) }))
     .filter(item => item.distance >= THRESHOLD)
