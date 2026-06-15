@@ -24,7 +24,10 @@ async function buscarEndpointsRelevantes(embedder, pregunta, limite = 3) {
   const output = await embedder(pregunta, { pooling: 'mean', normalize: true });
   const queryEmbedding = Array.from(output.data);
 
+
+
   if (import.meta.env.PROD) {
+    console.log('entra a prod');
     return buscarEnJSON(embeddingsData.query.data, queryEmbedding, limite);
   }
 
