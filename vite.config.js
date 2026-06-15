@@ -13,6 +13,11 @@ export default defineConfig({
                 target: 'https://library.service24gps.com',
                 changeOrigin: true,
                 secure: false,
+            },
+            '/milvus': {
+                target: 'http://localhost:19530',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/milvus/, '')
             }
         }
     }

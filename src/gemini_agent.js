@@ -11,6 +11,7 @@ import { GoogleGenAI } from '@google/genai';
 import { getSystemPrompt, herramientasGemini } from './prompt.js';
 import { ejecutarHerramienta } from './api.js';
 import { getCredentials } from './auth.js';
+import { buscarEndpoints } from './rag.js'
 import {
     $,
     addMessage, updateMessage,
@@ -41,6 +42,7 @@ let totalCostoSesion = 0;
 let textChat = null;
 
 function crearTextChat() {
+
     textChat = ai.chats.create({
         model: MODEL_TEXT,
         config: {
@@ -70,7 +72,12 @@ let aiTextBuffer = '';         // texto de respuesta acumulado
 export async function handleSendText(text) {
     if (!textChat) crearTextChat();
 
-    addMessage('user', text);
+
+    const endpointsTexto = await buscarEndpoints(text);
+    const textOriginal = text;
+    text = `${endpointsTexto}\n\n${text}`;
+
+    addMessage('user', textOriginal);
     const idTemporal = Date.now();
     addMessage('ai', '<span style="opacity:0.5;">Analizando datos...</span>', idTemporal);
 

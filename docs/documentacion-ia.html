@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentación IA — RedGPS Asistente</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3250;
+      --accent: #4f6ef7;
+      --accent2: #7c3aed;
+      --orange: #f97316;
+      --green: #22c55e;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --text-muted: #8892a4;
+      --code-bg: #141720;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 2.5rem 1.5rem;
+    }
+    header .logo { font-size: 0.75rem; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.4rem; }
+    header h1 { font-size: 1.8rem; font-weight: 700; }
+    header p { color: var(--text-muted); margin-top: 0.4rem; font-size: 0.95rem; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface); padding: 0 2.5rem; position: sticky; top: 0; z-index: 100; }
+    .tab-btn {
+      padding: 1rem 1.5rem; border: none; background: transparent; color: var(--text-muted);
+      cursor: pointer; font-size: 0.9rem; font-weight: 500; border-bottom: 3px solid transparent;
+      transition: all 0.2s; letter-spacing: 0.02em;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Content ── */
+    .tab-content { display: none; max-width: 960px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+    .tab-content.active { display: block; }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 3.5rem; }
+    .section-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1.25rem; padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-num {
+      background: var(--accent); color: #fff; border-radius: 50%;
+      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+    }
+    h2 { font-size: 1.25rem; font-weight: 600; }
+    h3 { font-size: 1rem; font-weight: 600; color: var(--text-muted); margin: 1.25rem 0 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    p { color: #c8d0dc; margin-bottom: 0.75rem; }
+
+    /* ── Cards ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    @media (max-width: 640px) { .card-grid { grid-template-columns: 1fr; } }
+    .card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .card p { font-size: 0.88rem; color: var(--text-muted); margin: 0; }
+    .card.good { border-left: 3px solid var(--green); }
+    .card.bad { border-left: 3px solid var(--red); }
+    .card.warn { border-left: 3px solid var(--orange); }
+    .card.info { border-left: 3px solid var(--accent); }
+
+    /* ── Code ── */
+    pre {
+      background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 1.25rem; overflow-x: auto; font-size: 0.82rem; line-height: 1.6;
+      margin-bottom: 1rem; font-family: 'Fira Code', 'Cascadia Code', monospace;
+    }
+    code { color: #93c5fd; }
+    .kw { color: #c084fc; }
+    .str { color: #86efac; }
+    .cm { color: #4b5563; font-style: italic; }
+    .num { color: #fbbf24; }
+    .fn { color: #60a5fa; }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 0.88rem; }
+    th { background: var(--surface2); padding: 0.6rem 1rem; text-align: left; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+    td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); color: #c8d0dc; }
+    tr:last-child td { border-bottom: none; }
+    .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+    .tag-green { background: #14532d; color: #86efac; }
+    .tag-red { background: #450a0a; color: #fca5a5; }
+    .tag-yellow { background: #451a03; color: #fcd34d; }
+    .tag-blue { background: #1e3a5f; color: #93c5fd; }
+
+    /* ── Diagrams ── */
+    .diagram-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem;
+      display: flex; justify-content: center;
+    }
+    .diagram-wrap .mermaid { max-width: 100%; }
+
+    /* ── Callouts ── */
+    .callout {
+      border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem;
+      border-left: 4px solid; font-size: 0.9rem;
+    }
+    .callout-info { background: #1e3a5f22; border-color: var(--accent); }
+    .callout-warn { background: #7c3aed11; border-color: var(--orange); }
+    .callout-tip { background: #14532d22; border-color: var(--green); }
+    .callout strong { display: block; margin-bottom: 0.25rem; }
+
+    /* ── User tab specifics ── */
+    .big-concept {
+      background: var(--surface2); border-radius: 12px; padding: 1.5rem;
+      margin-bottom: 1rem; display: flex; gap: 1rem; align-items: flex-start;
+    }
+    .big-concept .icon { font-size: 2rem; flex-shrink: 0; }
+    .big-concept h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .big-concept p { font-size: 0.9rem; color: var(--text-muted); margin: 0; }
+    .analogy { background: var(--surface); border: 1px dashed var(--border); border-radius: 8px; padding: 1rem 1.25rem; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; }
+    .analogy strong { color: var(--accent); }
+    .step-list { list-style: none; padding: 0; }
+    .step-list li { display: flex; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .step-list li:last-child { border-bottom: none; }
+    .step-list .step-n { background: var(--accent2); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">RedGPS — Asistente IA</div>
+  <h1>Documentación del Proyecto</h1>
+  <p>Arquitectura, conceptos aprendidos y decisiones de diseño del agente de flotas</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" onclick="switchTab('tecnica')">Versión Técnica</button>
+  <button class="tab-btn" onclick="switchTab('usuarios')">Para Usuarios</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  TAB TÉCNICA                                               -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="tab-tecnica" class="tab-content active">
+
+  <!-- 1. Chat vs Agente -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Chat vs Agente — La diferencia fundamental</h2>
+    </div>
+
+    <div class="card-grid">
+      <div class="card bad">
+        <h4>Chat simple</h4>
+        <p>Usuario escribe → modelo responde → fin. El modelo solo genera texto. No ejecuta acciones. Un turno, una respuesta.</p>
+      </div>
+      <div class="card good">
+        <h4>Agente</h4>
+        <p>Usuario da un objetivo → modelo planifica → ejecuta herramientas → evalúa → decide si continúa o termina. Múltiples pasos autónomos.</p>
+      </div>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart LR
+    subgraph CHAT["Chat simple"]
+        U1[Usuario] -->|mensaje| M1[Modelo]
+        M1 -->|respuesta| U1
+    end
+    subgraph AGENTE["Agente"]
+        U2[Usuario] -->|objetivo| M2[Modelo]
+        M2 -->|tool call| T1[Backend]
+        T1 -->|resultado| M2
+        M2 -->|¿necesito más?| M2
+        M2 -->|respuesta final| U2
+    end
+    style CHAT fill:#450a0a,stroke:#ef4444
+    style AGENTE fill:#14532d,stroke:#22c55e
+      </div>
+    </div>
+
+    <h3>El loop agéntico en tu código</h3>
+    <pre><code><span class="cm">// gemini_agent.js — el corazón del agente</span>
+<span class="kw">let</span> response = <span class="kw">await</span> textChat.<span class="fn">sendMessage</span>({ message: text });
+
+<span class="cm">// El modelo decide cuántas veces necesita herramientas</span>
+<span class="kw">while</span> (response.<span class="fn">functionCalls</span>?.length > <span class="num">0</span>) {
+    <span class="cm">// Ejecuta todas las tools en paralelo</span>
+    <span class="kw">const</span> results = <span class="kw">await</span> Promise.<span class="fn">all</span>(
+        response.functionCalls.<span class="fn">map</span>(llamada => <span class="fn">ejecutarHerramienta</span>(llamada.name, llamada.args))
+    );
+    <span class="cm">// Devuelve resultados al modelo para que decida qué sigue</span>
+    response = <span class="kw">await</span> textChat.<span class="fn">sendMessage</span>({ message: results });
+}
+<span class="cm">// Cuando no hay más function calls → respuesta final al usuario</span></code></pre>
+  </div>
+
+  <!-- 2. Universal Router -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Patrón Universal Router</h2>
+    </div>
+
+    <p>En vez de definir una función por endpoint (N tools = N definiciones en código), se define <strong>una sola tool genérica</strong>. El modelo aprende los endpoints desde el prompt, no desde el código.</p>
+
+    <div class="card-grid">
+      <div class="card bad">
+        <h4>Enfoque clásico — N tools</h4>
+        <p>Agregar endpoint = modificar código + agregar función + redesplegar. El programador es el cuello de botella.</p>
+      </div>
+      <div class="card good">
+        <h4>Universal Router — 1 tool</h4>
+        <p>Agregar endpoint = actualizar base.md. Sin tocar código. El modelo aprende del prompt.</p>
+      </div>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    USER[Usuario] --> MODEL[Modelo Gemini]
+    MODEL -->|"consultar_backend\n{intencion: 'getAllAssets'\nparametros: '{}'}"| ROUTER[Universal Router\napi.js]
+    ROUTER -->|despacha según intencion| BACK[Backend RedGPS]
+    BACK --> ROUTER
+    ROUTER --> MODEL
+    MODEL --> USER
+
+    PROMPT[base.md\nCatálogo de endpoints] -.->|conocimiento| MODEL
+    style ROUTER fill:#1e3a5f,stroke:#4f6ef7
+    style PROMPT fill:#22263a,stroke:#4f6ef7,stroke-dasharray: 5
+      </div>
+    </div>
+
+    <h3>Definición de la tool — una sola para todo</h3>
+    <pre><code><span class="cm">// prompt.js — UNA tool que maneja todos los endpoints</span>
+<span class="kw">export const</span> herramientas = [{
+    type: <span class="str">'function'</span>,
+    <span class="kw">function</span>: {
+        name: <span class="str">'consultar_backend'</span>,
+        description: <span class="str">'Enrutador universal. Úsalo para cualquier endpoint.'</span>,
+        parameters: {
+            type: <span class="str">'object'</span>,
+            properties: {
+                intencion:  { type: <span class="str">'string'</span>, description: <span class="str">"Nombre del endpoint: 'getAllAssets', 'getRecorrido'..."</span> },
+                parametros: { type: <span class="str">'string'</span>, description: <span class="str">"JSON con los parámetros requeridos"</span> }
+            },
+            required: [<span class="str">'intencion'</span>, <span class="str">'parametros'</span>]
+        }
+    }
+}];</code></pre>
+
+    <h3>Catálogo de endpoints — vive en base.md, no en código</h3>
+    <pre><code><span class="cm"># base.md — el modelo lee esto, no el programador</span>
+
+<span class="cm">## getAllAssets</span>
+Obtiene la lista completa de vehículos del usuario.
+Parámetros: {}
+
+<span class="cm">## infoVehiculo</span>
+Información detallada de un vehículo.
+Parámetros: { "nombre": "" }
+
+<span class="cm">## getRecorrido</span>
+Recorrido de un vehículo en rango de fechas.
+Parámetros: { "imei": "", "from": "YYYY-MM-DD 00:00:00", "to": "YYYY-MM-DD 23:59:59" }
+IMPORTANTE: imei = campo idgps de getAllAssets</code></pre>
+  </div>
+
+  <!-- 3. Token Economy -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Economía de Tokens — Límites y Costos</h2>
+    </div>
+
+    <p>Gemini 2.5 Flash tiene una ventana de contexto de <strong>1 millón de tokens</strong>. Cada vehículo típico ocupa ~300 tokens en JSON.</p>
+
+    <table>
+      <thead><tr><th>Activos</th><th>Tokens aprox.</th><th>¿Cabe en contexto?</th><th>Costo por consulta</th><th>Veredicto</th></tr></thead>
+      <tbody>
+        <tr><td>100</td><td>~30,000</td><td><span class="tag tag-green">Holgado</span></td><td>~$0.009</td><td><span class="tag tag-green">OK</span></td></tr>
+        <tr><td>1,000</td><td>~300,000</td><td><span class="tag tag-yellow">Posible</span></td><td>~$0.09</td><td><span class="tag tag-yellow">Caro</span></td></tr>
+        <tr><td>5,000</td><td>~1,500,000</td><td><span class="tag tag-red">No cabe</span></td><td>—</td><td><span class="tag tag-red">Imposible</span></td></tr>
+        <tr><td>12,000</td><td>~3,600,000</td><td><span class="tag tag-red">No cabe</span></td><td>—</td><td><span class="tag tag-red">Imposible</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-warn">
+      <strong>Caso real RedGPS</strong>
+      El cliente más grande tiene 12,000 activos — 3.6× el límite del contexto. Mandar todos los activos al modelo es técnicamente imposible, no solo ineficiente.
+    </div>
+
+    <h3>Fenómeno "Lost in the Middle"</h3>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+graph LR
+    subgraph CTX["Contexto del modelo"]
+        A["Inicio\n✅ Alta atención"] --- B["Centro\n⚠️ Baja atención\n(datos perdidos)"] --- C["Final\n✅ Alta atención"]
+    end
+    style A fill:#14532d,stroke:#22c55e
+    style B fill:#450a0a,stroke:#ef4444
+    style C fill:#14532d,stroke:#22c55e
+    style CTX fill:#1a1d27,stroke:#2e3250
+      </div>
+    </div>
+    <p>Con mucha data, el modelo tiende a ignorar información en el centro del contexto. Afecta directamente la precisión en búsquedas sobre grandes datasets.</p>
+
+    <h3>Precios Gemini 2.5 Flash (referencia)</h3>
+    <table>
+      <thead><tr><th>Tipo</th><th>Precio</th><th>Aplica a</th></tr></thead>
+      <tbody>
+        <tr><td>Input (texto)</td><td>$0.30 / 1M tokens</td><td>System prompt + historial + datos</td></tr>
+        <tr><td>Input cacheado</td><td>$0.075 / 1M tokens</td><td>Parte del prompt que no cambió</td></tr>
+        <tr><td>Output (texto)</td><td>$2.50 / 1M tokens</td><td>Respuesta generada</td></tr>
+        <tr><td>Thinking tokens</td><td>$3.50 / 1M tokens</td><td>Razonamiento interno del modelo</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-tip">
+      <strong>Optimización actual implementada</strong>
+      prompt.js redondea la fecha/hora a intervalos de 5 minutos para que el system prompt sea idéntico entre requests y active el caché de Gemini, reduciendo el costo de input tokens hasta 75%.
+    </div>
+  </div>
+
+  <!-- 4. Cache + Filtros -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Estrategia de Caché + Filtros del lado del servidor</h2>
+    </div>
+
+    <p>Solución al problema de los 12,000 activos: el modelo nunca recibe todos los datos. Solo recibe el resultado de una consulta ya filtrada.</p>
+
+    <div class="diagram-wrap">
+      <div class="mermaid">
+sequenceDiagram
+    actor U as Usuario
+    participant M as Modelo
+    participant C as Caché JS
+    participant B as Backend RedGPS
+
+    U->>M: "¿Cuántos Toyota tengo en Zona Norte?"
+    M->>C: consultar_cache({marca:"Toyota", grupo:"Zona Norte"})
+
+    alt Caché fresco (< 5 min)
+        C-->>M: 47 vehículos filtrados
+    else Caché vencido
+        C->>B: getAllAssets()
+        B-->>C: 12,000 vehículos (actualiza caché)
+        C-->>M: 47 vehículos filtrados
+    end
+
+    M-->>U: "Tienes 47 Toyota en Zona Norte"
+      </div>
+    </div>
+
+    <h3>Implementación del caché con TTL</h3>
+    <pre><code><span class="cm">// En api.js — caché con tiempo de vida</span>
+<span class="kw">let</span> cache = <span class="kw">null</span>;
+<span class="kw">let</span> cacheTimestamp = <span class="num">0</span>;
+<span class="kw">const</span> CACHE_TTL = <span class="num">5</span> * <span class="num">60</span> * <span class="num">1000</span>; <span class="cm">// 5 minutos</span>
+
+<span class="kw">async function</span> <span class="fn">consultarCache</span>(filtros = {}) {
+    <span class="kw">const</span> ahora = Date.<span class="fn">now</span>();
+
+    <span class="cm">// Si el caché está vencido o no existe, refresca</span>
+    <span class="kw">if</span> (!cache || (ahora - cacheTimestamp) > CACHE_TTL) {
+        cache = <span class="kw">await</span> <span class="fn">fetchAllAssets</span>();
+        cacheTimestamp = ahora;
+    }
+
+    <span class="cm">// Filtra localmente — el modelo solo recibe el resultado</span>
+    <span class="kw">return</span> <span class="fn">filtrarActivos</span>(cache, filtros);
+}
+
+<span class="kw">function</span> <span class="fn">filtrarActivos</span>(activos, { marca, modelo, grupo, estado }) {
+    <span class="kw">return</span> activos.<span class="fn">filter</span>(v => {
+        <span class="kw">if</span> (marca  && v.marca  !== marca)  <span class="kw">return false</span>;
+        <span class="kw">if</span> (modelo && v.modelo !== modelo) <span class="kw">return false</span>;
+        <span class="kw">if</span> (grupo  && v.grupo  !== grupo)  <span class="kw">return false</span>;
+        <span class="kw">if</span> (estado && v.estado !== estado) <span class="kw">return false</span>;
+        <span class="kw">return true</span>;
+    });
+}</code></pre>
+
+    <div class="callout callout-info">
+      <strong>Principio clave</strong>
+      El modelo es bueno para razonar sobre datos, no para almacenarlos. El caché almacena, el modelo razona. Nunca deben invertirse los roles.
+    </div>
+  </div>
+
+  <!-- 5. Normalización -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Normalización de Campos</h2>
+    </div>
+
+    <p>Distintos endpoints del backend pueden retornar el mismo dato con nombres diferentes, lo que confunde al modelo al encadenar llamadas.</p>
+
+    <table>
+      <thead><tr><th>Concepto</th><th>Endpoint A</th><th>Endpoint B</th><th>Endpoint C</th><th>Campo canónico</th></tr></thead>
+      <tbody>
+        <tr><td>ID GPS</td><td><code>imei</code></td><td><code>idgps</code></td><td><code>gpsId</code></td><td><strong>idgps</strong></td></tr>
+        <tr><td>Placa</td><td><code>placa</code></td><td><code>patente</code></td><td><code>licensePlate</code></td><td><strong>placa</strong></td></tr>
+        <tr><td>Nombre</td><td><code>nombre</code></td><td><code>name</code></td><td><code>vehicleName</code></td><td><strong>nombre</strong></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Normalizador en api.js</h3>
+    <pre><code><span class="cm">// Mapa de aliases → nombre canónico</span>
+<span class="kw">const</span> FIELD_MAP = {
+    imei:         <span class="str">'idgps'</span>,
+    gpsId:        <span class="str">'idgps'</span>,
+    patente:      <span class="str">'placa'</span>,
+    licensePlate: <span class="str">'placa'</span>,
+    name:         <span class="str">'nombre'</span>,
+    vehicleName:  <span class="str">'nombre'</span>,
+};
+
+<span class="kw">function</span> <span class="fn">normalizeResponse</span>(data) {
+    <span class="kw">if</span> (Array.<span class="fn">isArray</span>(data)) <span class="kw">return</span> data.<span class="fn">map</span>(normalizeResponse);
+    <span class="kw">if</span> (<span class="kw">typeof</span> data !== <span class="str">'object'</span> || data === <span class="kw">null</span>) <span class="kw">return</span> data;
+
+    <span class="kw">return</span> Object.<span class="fn">fromEntries</span>(
+        Object.<span class="fn">entries</span>(data).<span class="fn">map</span>(([k, v]) => [
+            FIELD_MAP[k] ?? k,   <span class="cm">// mapea si existe alias, si no conserva</span>
+            <span class="fn">normalizeResponse</span>(v) <span class="cm">// recursivo para objetos anidados</span>
+        ])
+    );
+}
+
+<span class="cm">// Aplicar en el despachador, antes de devolver al modelo</span>
+<span class="kw">const</span> raw = <span class="kw">await</span> <span class="fn">postRedGPS</span>(endpoint, body);
+<span class="kw">return</span> <span class="fn">normalizeResponse</span>(raw); <span class="cm">// el modelo siempre ve campos consistentes</span></code></pre>
+  </div>
+
+  <!-- 6. RAG -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>RAG — Retrieval Augmented Generation</h2>
+    </div>
+
+    <p>RAG permite que el modelo responda sobre grandes volúmenes de información sin necesidad de cargar todo en el contexto. Se basa en <strong>buscar primero, enviar solo lo relevante</strong>.</p>
+
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    subgraph FASE1["Fase 1 — Indexación (se hace una vez)"]
+        D1[Documento 1] --> E[Modelo de\nEmbeddings]
+        D2[Documento 2] --> E
+        D3["... 10,000 docs"] --> E
+        E --> VDB[(Vector DB\nPinecone / pgvector\nChromaDB)]
+    end
+
+    subgraph FASE2["Fase 2 — Consulta (en tiempo real)"]
+        Q[Pregunta del\nusuario] --> EQ[Embedding\nde la pregunta]
+        EQ --> SEARCH[Búsqueda\nde similitud]
+        VDB --> SEARCH
+        SEARCH --> TOP["Top 5-10\ndocumentos relevantes\n(texto plano)"]
+        TOP --> LLM[Modelo LLM]
+        LLM --> ANS[Respuesta]
+    end
+
+    style FASE1 fill:#1a1d27,stroke:#4f6ef7
+    style FASE2 fill:#1a1d27,stroke:#22c55e
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <strong>Los embeddings son solo para buscar — el modelo recibe texto plano</strong>
+      Un embedding es un vector numérico [0.23, -0.87, 0.41...] que representa el significado semántico. Se usa para encontrar qué es relevante. El modelo nunca ve los vectores — siempre recibe el texto original de los documentos encontrados.
+    </div>
+
+    <h3>Cuándo aplicar RAG en tu caso</h3>
+    <table>
+      <thead><tr><th>Situación</th><th>Solución recomendada</th></tr></thead>
+      <tbody>
+        <tr><td>Datos operativos en tiempo real (posición GPS, ignición)</td><td><span class="tag tag-blue">Caché + filtros</span></td></tr>
+        <tr><td>Datos que cambian cada horas (activos, grupos)</td><td><span class="tag tag-blue">Caché TTL + filtros</span></td></tr>
+        <tr><td>Documentos estáticos (manuales, políticas, FAQs)</td><td><span class="tag tag-green">RAG</span></td></tr>
+        <tr><td>Historial extenso de recorridos / reportes</td><td><span class="tag tag-green">RAG o consulta paginada</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 7. Escalabilidad de endpoints -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Escalabilidad — Estrategia por número de endpoints</h2>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+    START([¿Cuántos endpoints\nnecesita el agente?]) --> Q1{Menos de 20}
+    Q1 -->|Sí| A1["Todo en base.md\nEnfoque actual ✅"]
+    Q1 -->|No| Q2{20 a 100}
+    Q2 -->|Sí| A2["Agrupación jerárquica\npor dominio\n(Activos / Recorridos /\nReportes / Tareas)"]
+    Q2 -->|No| A3["Tool Retrieval\nRAG aplicado a endpoints\nVector DB de herramientas"]
+
+    style A1 fill:#14532d,stroke:#22c55e
+    style A2 fill:#451a03,stroke:#f97316
+    style A3 fill:#1e3a5f,stroke:#4f6ef7
+      </div>
+    </div>
+
+    <h3>Cómo funciona la agrupación jerárquica</h3>
+    <pre><code><span class="cm">// base.md con agrupación — en vez de listar 100 endpoints de golpe</span>
+
+<span class="cm">## CATEGORÍAS DISPONIBLES</span>
+- activos      → vehículos, flotas, grupos
+- recorridos   → rutas, posiciones, trayectos
+- reportes     → licencias, actividad, alertas
+- tareas       → asignaciones, colaboradores
+
+<span class="cm">## PASO 1: El modelo identifica la categoría</span>
+<span class="cm">## PASO 2: Solo se muestran los endpoints de esa categoría</span>
+<span class="cm">## Resultado: modelo ve 8-10 endpoints relevantes, no 100</span></code></pre>
+  </div>
+
+</div><!-- /tab-tecnica -->
+
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  TAB USUARIOS                                              -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="tab-usuarios" class="tab-content">
+
+  <!-- Intro -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>¿Qué es el Asistente de RedGPS?</h2>
+    </div>
+
+    <div class="big-concept">
+      <div class="icon">🤖</div>
+      <div>
+        <h4>Un asistente inteligente para tu flota</h4>
+        <p>Es un sistema que entiende preguntas en lenguaje natural y las traduce en consultas a tu plataforma de rastreo. En lugar de navegar menús, simplemente preguntas.</p>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <strong>Analogía:</strong> Imagina que tienes un asistente humano que conoce perfectamente tu plataforma de rastreo. Le dices "¿cuántos vehículos Toyota tengo en la Zona Norte?" y él consulta el sistema, agrupa los datos y te responde. El asistente de IA hace exactamente eso, pero de forma automática.
+    </div>
+  </div>
+
+  <!-- Chat vs Agente simple -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>¿Cómo entiende mis preguntas?</h2>
+    </div>
+
+    <div class="big-concept">
+      <div class="icon">💬</div>
+      <div>
+        <h4>No es un chat normal</h4>
+        <p>Un chat normal solo responde con lo que ya sabe. El asistente de RedGPS puede ir a buscar información a tu plataforma, procesarla y darte una respuesta con datos reales.</p>
+      </div>
+    </div>
+
+    <h3>Ejemplo paso a paso</h3>
+    <div class="diagram-wrap">
+      <div class="mermaid">
+sequenceDiagram
+    actor U as Tú
+    participant A as Asistente
+    participant P as Plataforma RedGPS
+
+    U->>A: "¿Cuántos vehículos tengo por marca?"
+    Note over A: Entiendo la pregunta,<br/>necesito consultar la plataforma
+    A->>P: Solicita lista de vehículos
+    P-->>A: Lista completa de vehículos
+    Note over A: Agrupa y cuenta por marca
+    A-->>U: "Tienes 47 Toyota, 23 Ford, 15 Chevrolet"
+      </div>
+    </div>
+  </div>
+
+  <!-- Por qué no puede ver todo -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>¿Por qué el asistente no puede ver todos mis vehículos a la vez?</h2>
+    </div>
+
+    <div class="big-concept">
+      <div class="icon">🧠</div>
+      <div>
+        <h4>La IA tiene una "memoria de trabajo" limitada</h4>
+        <p>Piensa en la IA como una persona que puede trabajar con cierta cantidad de información a la vez en su escritorio. Si pones demasiados papeles, ya no puede procesar bien.</p>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <strong>Analogía del escritorio:</strong> Un analista muy capaz puede revisar 50 expedientes con detalle y darte un análisis perfecto. Si le mandas 12,000 expedientes de golpe, su escritorio colapsa — físicamente no caben. La solución no es buscar un analista más grande, sino enviarle solo los expedientes relevantes para cada consulta.
+    </div>
+
+    <div class="card-grid">
+      <div class="card bad">
+        <h4>❌ Lo que no se puede hacer</h4>
+        <p>Enviar los 12,000 vehículos completos al asistente en cada pregunta. No caben en su "escritorio de trabajo" y el costo sería prohibitivo.</p>
+      </div>
+      <div class="card good">
+        <h4>✅ Cómo se resuelve</h4>
+        <p>El sistema filtra primero en el servidor y solo envía al asistente la información relevante para esa consulta específica.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Caché -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>¿Qué es el caché y por qué ayuda?</h2>
+    </div>
+
+    <div class="big-concept">
+      <div class="icon">⚡</div>
+      <div>
+        <h4>Una memoria temporal que evita consultas repetidas</h4>
+        <p>El caché guarda temporalmente la lista de vehículos en el navegador. Así, si haces varias preguntas seguidas, no se tiene que pedir la lista al servidor cada vez.</p>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <strong>Analogía:</strong> Es como imprimir el directorio telefónico una vez y tenerlo en tu escritorio. Cuando alguien te pida un teléfono, lo buscas en tu copia local en segundos. Solo vuelves a imprimir cuando el directorio cambia. Cada 5 minutos el sistema verifica si hay cambios y actualiza si es necesario.
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart LR
+    U[Tú preguntas] --> CHECK{¿Hay datos\nen caché?}
+    CHECK -->|Sí, y son recientes| FILTER[Filtra los datos\nrelevantes]
+    CHECK -->|No, o vencidos| FETCH[Consulta el\nservidor]
+    FETCH --> SAVE[Guarda en\ncaché]
+    SAVE --> FILTER
+    FILTER --> AI[Asistente\nresponde]
+    style CHECK fill:#1e3a5f,stroke:#4f6ef7
+    style AI fill:#14532d,stroke:#22c55e
+      </div>
+    </div>
+  </div>
+
+  <!-- RAG simple -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>¿Cómo funciona con documentos y manuales?</h2>
+    </div>
+
+    <div class="big-concept">
+      <div class="icon">📚</div>
+      <div>
+        <h4>Busca antes de responder</h4>
+        <p>Cuando el asistente necesita información de documentos (manuales, políticas, reportes históricos), no los lee todos. Primero busca cuáles son relevantes para tu pregunta, y solo esos los revisa.</p>
+      </div>
+    </div>
+
+    <div class="analogy">
+      <strong>Analogía de la biblioteca:</strong> Imagina una biblioteca con 10,000 libros. Cuando le preguntas al bibliotecario sobre "procedimientos de mantenimiento preventivo", no lee los 10,000 libros — va al índice, encuentra los 3 libros relevantes, los lee y te responde. El sistema de índice inteligente se llama RAG.
+    </div>
+
+    <div class="card-grid">
+      <div class="card info">
+        <h4>Preguntas que usa el caché</h4>
+        <p>Estado actual de vehículos, posiciones, ignición, grupos — datos que cambian frecuentemente.</p>
+      </div>
+      <div class="card info">
+        <h4>Preguntas que usan RAG</h4>
+        <p>Manuales de uso, políticas de la empresa, reportes históricos, documentación técnica — datos estáticos o que cambian poco.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Qué puede hacer -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>¿Qué puede hacer el asistente?</h2>
+    </div>
+
+    <ul class="step-list">
+      <li><div class="step-n">1</div><div><strong>Consultar tu flota completa</strong> — "¿Cuántos vehículos tengo activos en este momento?"</div></li>
+      <li><div class="step-n">2</div><div><strong>Filtrar y agrupar</strong> — "Muéstrame todos los Toyota del grupo Zona Norte con ignición encendida"</div></li>
+      <li><div class="step-n">3</div><div><strong>Ver recorridos</strong> — "¿Cuál fue la ruta de la Unidad 05 hoy?"</div></li>
+      <li><div class="step-n">4</div><div><strong>Encadenar consultas</strong> — Puede hacer varias consultas automáticamente para responder una sola pregunta compleja</div></li>
+      <li><div class="step-n">5</div><div><strong>Responder por voz</strong> — Puedes hablarle y te responde en audio, sin necesidad de escribir</div></li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <strong>Consejo de uso</strong>
+      Habla con el asistente como lo harías con un colega que conoce tu plataforma. No necesitas usar comandos exactos — el lenguaje natural funciona: "oye, ¿cuántos camiones están parados ahora?"
+    </div>
+  </div>
+
+</div><!-- /tab-usuarios -->
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#1e3a5f',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#4f6ef7',
+      lineColor: '#4f6ef7',
+      secondaryColor: '#22263a',
+      tertiaryColor: '#14532d',
+      background: '#0f1117',
+      mainBkg: '#1a1d27',
+      nodeBorder: '#2e3250',
+      edgeLabelBackground: '#22263a',
+      fontFamily: 'Segoe UI, system-ui, sans-serif'
+    }
+  });
+
+  function switchTab(name) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>

@@ -16,8 +16,8 @@ function getRedGPSCredentials() {
     const creds = getCredentials();
     console.log('📡 creds:', creds);
     return {
-        token: creds ? creds.token : 'wBcWYNxVw+Z6UtWbX3ISxXQZ6GOA6BNBd3JII5clpjD0RoaGjWle8pe7UyufjOvI',
-        apikey: creds ? creds.redgpsKey : '6024b79f2b985aa87539deb0bc0f80d4',
+        token: creds ? creds.token : 'MCNS1P1iGyB/BEPPnBLfDwSHktAScB5HQNQaoW6ZkGQ38J6Ut303+ti8FyXSLXd3',
+        apikey: creds ? creds.redgpsKey : '90193e6fcd90b47902fcfdf4adf34ddc',
         username: creds ? creds.username : 'sin usuario'
     };
 }

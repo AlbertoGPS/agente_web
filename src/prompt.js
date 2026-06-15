@@ -13,7 +13,7 @@ import basePrompt from './prompts/base.md?raw';
  * Retorna el system prompt completo con la fecha/hora actual inyectada.
  * Se llama una vez al iniciar cada sesión para tener la fecha fresca.
  */
-export function getSystemPrompt() {
+export function getSystemPrompt(endpoints) {
     const ahora = new Date();
     
     // REDONDEO: Redondeamos a los 5 minutos más cercanos para activar el CACHING de Google.
@@ -33,7 +33,7 @@ export function getSystemPrompt() {
     Calcula fechas relativas ("hoy", "mañana", "ayer") basándote en esta. 
     Para las herramientas/API usa SIEMPRE formato 'YYYY-MM-DD HH:MM:SS'.\n\n`;
 
-    return  basePrompt + contextoTemporal;
+    return  basePrompt.replace('{{endpoints}}', endpoints) + contextoTemporal ;
 }
 
 /**
